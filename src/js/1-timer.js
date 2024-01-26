@@ -1,16 +1,20 @@
 import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
+import icon from '../img/octagon.svg';
 
-const dataTimePicker = document.getElementById('datetime-picker');
-const startBtn = document.querySelector('[data-start]'),
-  dataDays = document.querySelector('span[data-days]'),
-  dataHours = document.querySelector('span[data-hours]'),
-  dataMinutes = document.querySelector('span[data-minutes]'),
-  dataSeconds = document.querySelector('span[data-seconds]');
+const startBtn = document.querySelector('[data-start]');
+const timerDays = document.querySelector('[data-days]');
+const timerHours = document.querySelector('[data-hours]');
+const timerMinutes = document.querySelector('[data-minutes]');
+const timerSeconds = document.querySelector('[data-seconds]');
 
-let userSelectedDate;
+startBtn.addEventListener('click', onStartTimer);
 
-disableBtn();
+let changedTimerData = false;
+let userSelectedDate = 0;
+startBtn.disabled = true;
 
 const options = {
   enableTime: true,
@@ -18,86 +22,39 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    if (selectedDates[0] > new Date()) {
-      userSelectedDate = selectedDates[0];
-      activeBtn();
+    userSelectedDate = selectedDates[0];
+
+    if (selectedDates[0] <= Date.now()) {
       iziToast.show({
-        icon: 'icon-true',
-        backgroundColor: '#82C43C',
-        message: 'You can start the countdown',
-        messageColor: '#FAFAFB',
-        messageSize: '16px',
-        position: 'topCenter',
-        close: false,
-      });
-    } else {
-      iziToast.show({
-        icon: 'icon-false',
-        backgroundColor: '#EF4040',
+        iconUrl: icon,
+        theme: 'dark',
         message: 'Please choose a date in the future',
-        messageColor: '#FFBEBE',
         messageSize: '16px',
-        position: 'topCenter',
-        close: false,
+        messageColor: 'white',
+        backgroundColor: '#EF4040',
+        position: 'topRight',
+        timeout: 5000,
       });
-      disableBtn();
+
+      return;
+    } else {
+      startBtn.disabled = false;
     }
+    changedTimerData = true;
   },
 };
 
-startBtn.addEventListener('click', event => {
-  event.preventDefault();
-
-  const backReferenceTimer = setInterval(() => {
-    disableBtn();
-    const backReference = userSelectedDate - Date.now();
-    const convertDate = convertMs(backReference);
-    if (backReference > 0) {
-      dataDays.textContent = addLeadingZero(convertDate.days);
-      dataHours.textContent = addLeadingZero(convertDate.hours);
-      dataMinutes.textContent = addLeadingZero(convertDate.minutes);
-      dataSeconds.textContent = addLeadingZero(convertDate.seconds);
-    } else {
-      clearInterval(backReferenceTimer);
-      iziToast.show({
-        icon: 'icon-true',
-        backgroundColor: '#82C43C',
-        message: 'Date came, timer  has stopped',
-        messageColor: '#FAFAFB',
-        messageSize: '16px',
-        position: 'topCenter',
-        close: false,
-      });
-    }
-  }, 1000);
-});
-
-function disableBtn() {
-  startBtn.disable = true;
-  startBtn.style.background = '#cfcfcf';
-  startBtn.style.color = '#989898';
-}
-
-function activeBtn() {
-  startBtn.disable = false;
-  startBtn.style.background = '#4e75ff';
-  startBtn.style.color = '#fff';
-}
+flatpickr('#datetime-picker', options);
 
 function convertMs(ms) {
-  // Number of milliseconds per unit of time
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
   const day = hour * 24;
 
-  // Remaining days
   const days = Math.floor(ms / day);
-  // Remaining hours
   const hours = Math.floor((ms % day) / hour);
-  // Remaining minutes
   const minutes = Math.floor(((ms % day) % hour) / minute);
-  // Remaining seconds
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
   return { days, hours, minutes, seconds };
@@ -107,4 +64,25 @@ function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
 
-flatpickr(dataTimePicker, options);
+function onStartTimer() {
+  changedTimerData = false;
+  const intervalId = setInterval(() => {
+    const timeDifference = userSelectedDate - Date.now();
+    const time = convertMs(timeDifference);
+
+    timerDays.textContent = addLeadingZero(time.days);
+    timerHours.textContent = addLeadingZero(time.hours);
+    timerMinutes.textContent = addLeadingZero(time.minutes);
+    timerSeconds.textContent = addLeadingZero(time.seconds);
+
+    if (timeDifference <= 1000 || changedTimerData === true) {
+      clearInterval(intervalId);
+      timerDays.textContent = '00';
+      timerHours.textContent = '00';
+      timerMinutes.textContent = '00';
+      timerSeconds.textContent = '00';
+    }
+  }, 1000);
+
+  startBtn.disabled = true;
+}

@@ -1,87 +1,92 @@
-.container {
-  width: 355px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
+* {
+  box-sizing: border-box;
+}
 
-  margin-top: 15px;
-  margin-left: 25px;
-
+body {
   font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
-}
-
-.clock-wrapper {
-  display: flex;
-  gap: 8px;
-}
-
-.clock-wrapper input {
-  width: 272px;
-  height: 40px;
-  padding-left: 16px;
-
-  border-radius: 4px;
-  border: 1px solid #808080;
-
+  font-style: normal;
   color: #2e2f42;
+  font-weight: 400;
+}
+
+a {
+  display: block;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+input {
+  width: 280px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  border: 1px solid #4e75ff;
+  padding: 8px 16px;
+
+  font-family: inherit;
+  color: #2e2f42;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
   line-height: 1.5;
   letter-spacing: 0.04em;
-  font-size: inherit;
+
+  margin-bottom: 32px;
+  margin-left: 32px;
 }
 
-.clock-wrapper button {
-  width: 75px;
-  height: 40px;
+input:disabled {
+  border: 1px solid #808080;
+}
+
+button {
   padding: 8px 16px;
   border-radius: 8px;
+  background: #4e75ff;
   border: none;
 
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  font-style: normal;
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: 0.04em;
+
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+button:hover {
+  background: #6c8cff;
+}
+
+button:disabled {
+  color: #989898;
+  background: #cfcfcf;
 }
 
 .timer {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 50px;
-
-  margin-top: 32px;
+  gap: 24px;
+  margin-left: 32px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-
-  width: 55px;
-  height: 48px;
 }
 
 .value {
-  color: #2e2f42;
   font-size: 40px;
-  line-height: 1.2; /* 120% */
-  letter-spacing: 1.6px;
+
+  line-height: 1.2;
+  letter-spacing: 0.04em;
 }
 
 .label {
-  color: #2e2f42;
-  line-height: 1.5; /* 150% */
-}
-
-.icon-true {
-  background-image: url('../img/bi_check2-circle.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.icon-false {
-  background-image: url('../img/bi_x-octagon.svg');
-  background-repeat: no-repeat;
-  background-position: center;
+  font-size: 16px;
+  line-height: 1.5;
 }

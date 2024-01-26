@@ -1,49 +1,49 @@
 import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 
 const form = document.querySelector('.form');
 
-form.addEventListener('submit', event => {
-  event.preventDefault();
+form.addEventListener('submit', handleSubmit);
 
-  const time = form.elements.delay.value;
-  const state = form.elements.state.value;
+function handleSubmit(ev) {
+  ev.preventDefault();
 
-  function promise() {
+  const delay = Number(ev.target.elements.delay.value);
+  const value = ev.target.elements.state.value;
+
+  const makePromise = () => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        if (state === 'fulfilled') {
-          resolve();
+        if (value === 'fulfilled') {
+          resolve(`✅ Fulfilled promise in ${delay}ms`);
         }
-        reject();
-      }, time);
+        reject(`❌ Rejected promise in ${delay}ms`);
+      }, delay);
     });
-  }
+  };
 
-  promise()
-    .then(value => successfulMessage(time))
-    .catch(error => errorMessage(time));
-});
+  makePromise()
+    .then(value => {
+      console.log(value);
+      iziToast.show({
+        theme: 'dark',
+        message: `${value}`,
+        messageSize: '16px',
+        messageColor: 'white',
+        backgroundColor: '#59A10D',
+        position: 'topRight',
+      });
+    })
+    .catch(error => {
+      console.log(error);
+      iziToast.show({
+        message: `${error}`,
+        messageSize: '16px',
+        messageColor: 'white',
+        backgroundColor: '#EF4040',
+        position: 'topRight',
+      });
+    });
 
-function errorMessage(delay) {
-  iziToast.show({
-    icon: 'icon-false',
-    backgroundColor: '#FC5A5A',
-    message: `Rejected promise in ${delay} ms`,
-    messageColor: '#FAFAFB',
-    messageSize: '16px',
-    position: 'topCenter',
-    close: false,
-  });
-}
-
-function successfulMessage(delay) {
-  iziToast.show({
-    icon: 'icon-false',
-    backgroundColor: '#82C43C',
-    message: `Fulfilled promise in ${delay} ms`,
-    messageColor: '#FAFAFB',
-    messageSize: '16px',
-    position: 'topCenter',
-    close: false,
-  });
+  ev.target.reset();
 }
